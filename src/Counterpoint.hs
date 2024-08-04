@@ -104,9 +104,11 @@ approachPerfection a b = let intervals = calculateInterval a b
                              contraryOrOblique m = (m == Contrary) || (m == Oblique)
                           in all contraryOrOblique onlyPerfectMotions
 
+--TODO this is not quite right - does this mean two adjacent notes in the same voice
+-- or two coinciding notes from different voices?
 --The interval of a tenth should not be exceeded between two adjacent parts unless by necessity.
 limitInterval :: [Pitch] -> [Pitch] -> Bool
-limitInterval a b = let intervals = calculateInterval a b
+limitInterval a b = let intervals = calculateAbsInterval a b
                         lessThanTenth i = i <= 16 -- a Major Tenth is 16 semitones
                      in all lessThanTenth intervals
 
@@ -127,6 +129,8 @@ isParallelFifthOrOctave' (x',y') = let x = intToMod x'
                                        y = intToMod y'  
                                        in isParallelFifthOrOctave (x,y)
    
+
+--TODO this doesn't seem quite right. Violated by example
 --Avoid parallel fifths or octaves between any two parts;
 avoidParallelFifthsOrOctaves :: [Pitch] -> [Pitch] -> Bool
 avoidParallelFifthsOrOctaves a b = let ms = motions a b
