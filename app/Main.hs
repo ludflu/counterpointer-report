@@ -2,8 +2,6 @@ module Main where
 
 import Euterpea
 import Scales
--- import Counterpoint
--- import Compose
 
 getNotes :: [Int] -> [Music Pitch] -> [Music Pitch]
 getNotes sg scale = map (\x -> scale !! x) sg
@@ -13,8 +11,6 @@ mkTriad n = [n, n+2, n+4]
 
 mkSeventh :: Int -> [Int]
 mkSeventh n = [n, n+2, n+4, n+6]
-
-
 
 
 

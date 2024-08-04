@@ -162,13 +162,21 @@ getIndexes = map (`mod` 7)
 getOctaveShift :: [Int] -> [Int]
 getOctaveShift = map ((* 12) . (`div` 7)) 
 
-
 calculateInterval :: Pitch -> Pitch -> TwelveTone
 calculateInterval p1  p2 = let i  = abs (absPitch p1 - absPitch p2)
                             in toMod $ fromIntegral i
 
 isConsonant :: Pitch -> Pitch -> Bool
 isConsonant p1 p2 = Set.member (calculateInterval p1 p2) consonantIntervals
+
+calcConsanance' :: Music Pitch -> Music Pitch -> Bool
+calcConsanance' m1 m2 = let p1 = getPitch m1
+                            p2 = getPitch m2
+                        in isConsonant p1 p2
+
+calcConsanance :: [Music Pitch] -> [Music Pitch] -> [Bool]
+calcConsanance m1 m2 =  zipWith calcConsanance' m1 m2
+
 
 getNotes :: Pitch -> Mood -> Rational -> [Int] -> [Music Pitch]
 getNotes key mood duration degrees = let scale = makeDiatonicScale mood key duration
