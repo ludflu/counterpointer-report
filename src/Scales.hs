@@ -174,6 +174,14 @@ calculateInterval' p1  p2 = let i  = abs (absPitch p1 - absPitch p2)
 calculateInterval :: [Pitch] -> [Pitch] -> [Interval]
 calculateInterval p1 p2 = zipWith calculateInterval' p1 p2
 
+
+calculateAbsInterval' :: Pitch -> Pitch -> Int
+calculateAbsInterval' p1  p2 = abs (absPitch p1 - absPitch p2)
+                            
+calculateAbsInterval :: [Pitch] -> [Pitch] -> [Int]
+calculateAbsInterval p1 p2 = zipWith calculateAbsInterval' p1 p2
+
+
 isConsonant :: Pitch -> Pitch -> Bool
 isConsonant p1 p2 = Set.member (calculateInterval' p1 p2) consonantIntervals
 

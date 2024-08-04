@@ -113,8 +113,10 @@ limitInterval a b = let intervals = calculateInterval a b
 --Use no unisons except at the beginning or end.
 unisonOnlyBeginOrEnd :: [Pitch] -> [Pitch] -> Bool
 unisonOnlyBeginOrEnd a b = let intervals = calculateInterval a b
-                               middle = (init . tail) intervals
-                            in all (>0) middle
+                               absIntervals = calculateAbsInterval a b
+                               modularAndAbsIntervals = zip intervals absIntervals
+                               middle = (init . tail) modularAndAbsIntervals
+                            in all (\(modInterval,abInterval) -> modInterval>0 || abInterval /= 0) middle
 
 
 isParallelFifthOrOctave :: (Interval, Interval) -> Bool
