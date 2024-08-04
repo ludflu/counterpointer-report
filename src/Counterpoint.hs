@@ -8,10 +8,13 @@ import Scales
 import Euterpea (Pitch, absPitch)
 import Data.Modular (toMod)
 
-data MusicMotion = Contrary | Parallel | Similar | Oblique
+data MusicMotion = Contrary | Parallel  | Oblique | Similar
     deriving (Show, Eq)
 
 type Note = Int
+
+data Direction = Ascending | Descending | Stationary
+    deriving (Show, Eq)
 
 isConsonantInterval :: Interval -> Bool
 isConsonantInterval i = Set.member i consonantIntervals
@@ -35,14 +38,17 @@ tuple2 ns = (head ns, (head . tail) ns)
 diff :: (Int,Int) -> Int
 diff (a,b) = b-a
 
+intToDirection :: Int -> Direction
+intToDirection i = if i > 0 then Ascending else Descending
+
 --takes a series of notes, specificed in number of half steps (semitones)
 -- returns a series of intervals, also in semitones. negative if pitch drops, positive if it rises
-direction :: [Pitch] -> [Interval]
+direction :: [Pitch] -> [Int]
 direction ns = let absNotes = map absPitch ns
                    prs = windows 2 absNotes
                    noEmptyPrs = filter (\x -> length x == 2) prs
-                   tps = map (diff . tuple2) noEmptyPrs
-                in map intToMod tps
+                   directions = map (diff . tuple2) noEmptyPrs
+                in directions
                
 mostlySteps :: [Pitch] -> Bool
 mostlySteps ns = let is = direction ns
@@ -51,15 +57,16 @@ mostlySteps ns = let is = direction ns
                      leaps = filter (>2) absInts
                   in length steps > length leaps
 
-motionType :: Interval -> Interval -> MusicMotion
+motionType :: Int -> Int -> MusicMotion
 motionType a b
-  | a == b       = Parallel   --same direction and interval
-  | a>0 && b<0   = Contrary   --different direction
-  | a<0 && b>0   = Contrary   --different direction
-  | a==0 || b==0 = Oblique    --one note repeats
-  | otherwise    = Similar    --same direction, different interval
+ | a == b       = Parallel   --same direction and interval
+ | a>0 && b<0   = Contrary   --different direction
+ | a<0 && b>0   = Contrary   --different direction
+ | a==0 || b==0 = Oblique    --one note repeats
+ | otherwise    = Similar    --same direction, different interval
 
-motions :: [Pitch] -> [Pitch] -> [(Interval,Interval)]
+
+motions :: [Pitch] -> [Pitch] -> [(Int, Int)]
 motions a b = let adir = direction a
                   bdir = direction b
                in zip adir bdir
@@ -109,11 +116,20 @@ unisonOnlyBeginOrEnd a b = let intervals = calculateInterval a b
                                middle = (init . tail) intervals
                             in all (>0) middle
 
+
+isParallelFifthOrOctave :: (Interval, Interval) -> Bool
+isParallelFifthOrOctave (x,y) = x == octave || abs x == perfectFifth && x==y
+
+isParallelFifthOrOctave' :: (Int, Int) -> Bool
+isParallelFifthOrOctave' (x',y') = let x = intToMod x'
+                                       y = intToMod y'  
+                                       in isParallelFifthOrOctave (x,y)
+   
 --Avoid parallel fifths or octaves between any two parts;
 avoidParallelFifthsOrOctaves :: [Pitch] -> [Pitch] -> Bool
 avoidParallelFifthsOrOctaves a b = let ms = motions a b
                                        isParallelFifthOrOctave (x,y) = abs x == octave || abs x == perfectFifth && x==y
-                                       pfo = filter isParallelFifthOrOctave ms
+                                       pfo = filter isParallelFifthOrOctave' ms
                                     in null pfo
 
 --and avoid "hidden" parallel fifths or octaves: that is, movement by similar motion to a perfect fifth or octave, unless one part (sometimes restricted to the higher of the parts) moves by step.
@@ -123,7 +139,7 @@ avoidParallelFifthsOrOctaves a b = let ms = motions a b
 --(In practice Palestrina and others frequently allowed themselves such progressions, especially if they do not involve the lowest of the parts.)
 avoidParallelFourths :: [Pitch] -> [Pitch] -> Bool
 avoidParallelFourths a b = let ms = motions a b
-                               isParallelFourth (x,y) = x == perfectFourth && x==y
+                               isParallelFourth (x,y) = intToMod x == perfectFourth && x==y
                                pfo = filter isParallelFourth ms
                             in null pfo
 
@@ -159,7 +175,7 @@ noDissonantIntervals a b = let intervals = Set.fromList $ calculateInterval a b
 leapOnlyByConsonantInterval :: [Pitch] -> Bool
 leapOnlyByConsonantInterval ns = let ms = direction ns
                                      leaps = filter (\x -> abs x > 2) ms
-                                     absLeaps = map abs leaps
+                                     absLeaps = map intToMod leaps
                                      cleaps = filter isConsonantInterval absLeaps
                                   in length cleaps == length absLeaps
 
@@ -203,8 +219,8 @@ data CounterpointReport = CounterpointReport {
     onlyConsonantLeapsR :: Bool
 } deriving (Show)
 
-report :: [Pitch] -> [Pitch] -> CounterpointReport
-report a b = CounterpointReport {
+counterpointReport :: [Pitch] -> [Pitch] -> CounterpointReport
+counterpointReport a b = CounterpointReport {
     isValidFirstSpeciesR = isValidFirstSpeciesCounterpoint a b,
     noDissonantIntervalsR = noDissonantIntervals a b,
     noLeapsInSameDirectionR = noLeapsInSameDirection a b,

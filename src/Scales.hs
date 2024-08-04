@@ -4,13 +4,10 @@
 {-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE TypeOperators #-}
 
-
-
 module Scales where
 
 
 import Data.Modular (ℤ, type (/), unMod, toMod)
-
 
 import Euterpea (Music, Pitch, wn, Primitive(Note), PitchClass, Music(Prim), shiftPitches, chord, absPitch, pitch, note)
 

@@ -2,6 +2,7 @@ module Main where
 
 import Euterpea
 import Scales
+import Counterpoint (counterpointReport)
 
 getNotes :: [Int] -> [Music Pitch] -> [Music Pitch]
 getNotes sg scale = map (\x -> scale !! x) sg
@@ -64,11 +65,15 @@ p2 :: Pitch
 p2 = (D,4)
 
 -- i = calculateInterval p1 p2
+cpt = map getPitch counterpoint
+cfp = map getPitch cantusFirmus
 
+rpt = counterpointReport cpt cfp
 
 main :: IO ()
 main = do 
           print "cantus firmus"
-          play $ line cantusFirmus
-          play $ line counterpoint
-          play $ line cantusFirmus :=: line counterpoint
+          print rpt
+         --  play $ line cantusFirmus
+         --  play $ line counterpoint
+         --  play $ line cantusFirmus :=: line counterpoint
