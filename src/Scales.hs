@@ -9,7 +9,7 @@
 module Scales where
 
 
-import Data.Modular (ℤ, type (/))
+import Data.Modular (ℤ, type (/), unMod, toMod)
 
 
 import Euterpea (Music, Pitch, wn, Primitive(Note), PitchClass, Music(Prim), shiftPitches, chord, absPitch, pitch, note)
@@ -28,14 +28,14 @@ data ScaleDegree = Tonic | Supertonic | Mediant | Subdominant | Dominant | Subme
 data Degree = I | II | III | IV | V | VI | VII
    deriving (Eq, Ord, Enum, Show)
 
-newtype ScaleFamily = ScaleFamily [Int]
+newtype ScaleFamily = ScaleFamily [TwelveTone]
 newtype Progression = Progression [(Degree,Mood)]
 
 type TwelveTone = ℤ / 12
 
-whole :: Int
+whole :: TwelveTone
 whole = 2
-half :: Int
+half :: TwelveTone
 half = 1
 
 major= ScaleFamily [whole, whole, half, whole, whole, whole, half, whole]
@@ -60,45 +60,45 @@ mixolydianPentatonic= ScaleFamily [whole, whole, minorThird, minorThird, whole]
 phrygianPentatonic= ScaleFamily [half, whole, minorThird, half, minorThird]
 diminishedPentatonic= ScaleFamily [whole, half, minorThird, half, minorThird]
 
-unison :: Int
+unison :: TwelveTone
 unison = 0
 
-minorSecond :: Int
+minorSecond :: TwelveTone
 minorSecond = 1
 
-majorSecond :: Int
+majorSecond :: TwelveTone
 majorSecond = 2
 
-minorThird :: Int
+minorThird :: TwelveTone
 minorThird = 3
 
-majorThird :: Int
+majorThird :: TwelveTone
 majorThird = 4
 
-perfectFourth :: Int
+perfectFourth :: TwelveTone
 perfectFourth = 5
 
-tritone :: Int  
+tritone :: TwelveTone  
 augmentedFourth = 6
 diminishedFifth = 6
 tritone = 6
 
-perfectFifth :: Int
+perfectFifth :: TwelveTone
 perfectFifth = 7
 
-minorSixth :: Int
+minorSixth :: TwelveTone
 minorSixth = 8
 
-majorSixth :: Int
+majorSixth :: TwelveTone
 majorSixth = 9
 
-minorSeventh :: Int
+minorSeventh :: TwelveTone
 minorSeventh = 10
 
-majorSeventh :: Int
+majorSeventh :: TwelveTone
 majorSeventh = 11
 
-octave :: Int
+octave :: TwelveTone
 octave  = 12
 
 --leaving out the perfectFourth from the list of perfect and consonant Intervals
@@ -106,14 +106,18 @@ perfection = Set.fromList [unison, octave, perfectFifth]
 dissonantIntervals = Set.fromList [minorSecond, majorSecond, tritone, minorSeventh, majorSeventh]
 consonantIntervals = Set.fromList [ unison, minorThird, majorThird, perfectFourth, perfectFifth, minorSixth, majorSixth, octave]
 
-patternToSemitones :: [Int] -> [Int]
+patternToSemitones :: [TwelveTone] -> [TwelveTone]
 patternToSemitones pat = init $ scanl1 (+) (0:pat)
+
+modToInt :: TwelveTone -> Int
+modToInt = fromIntegral . unMod 
 
 -- given a scale pattern, a root note, and a duration, return the scale of notes
 makeScale :: ScaleFamily -> Pitch -> Rational -> [Music Pitch]
 makeScale (ScaleFamily ptn) p d = let f ap = note d (pitch (absPitch p + ap))
                                       semis = patternToSemitones ptn
-                                   in map f semis
+                                      integerSemitones = map modToInt semis
+                                   in map f integerSemitones
 
 
 makeMajorScale :: Pitch -> Rational -> [Music Pitch]
@@ -163,6 +167,8 @@ calculateInterval :: Pitch -> Pitch -> TwelveTone
 calculateInterval p1  p2 = let i  = abs (absPitch p1 - absPitch p2)
                             in toMod $ fromIntegral i
 
+isConsonant :: Pitch -> Pitch -> Bool
+isConsonant p1 p2 = Set.member (calculateInterval p1 p2) consonantIntervals
 
 getNotes :: Pitch -> Mood -> Rational -> [Int] -> [Music Pitch]
 getNotes key mood duration degrees = let scale = makeDiatonicScale mood key duration
@@ -180,11 +186,12 @@ mkSeventh :: Int -> [Int]
 mkSeventh n = [n, n+2, n+4, n+6]
 
 makeMajorChord :: Music Pitch -> Music Pitch
-makeMajorChord p = chord [p, shiftPitches (whole+whole) p, shiftPitches (whole+whole+half+whole) p]
+makeMajorChord p = chord [p, shiftPitches (modToInt (whole+whole)) p, shiftPitches (modToInt (whole+whole+half+whole)) p]
 
 makeMinorChord :: Music Pitch -> Music Pitch
-makeMinorChord p = chord [p, shiftPitches (whole+half) p, shiftPitches (whole+half+whole+whole) p]
+makeMinorChord p = chord [p, shiftPitches (modToInt(whole+half)) p, shiftPitches (modToInt(whole+half+whole+whole)) p]
 
+makeChord :: Mood -> Music Pitch -> Music Pitch
 makeChord Major = makeMajorChord
 makeChord Minor = makeMinorChord
 

@@ -23,42 +23,42 @@ mkSeventh n = [n, n+2, n+4, n+6]
 
 counterpoint :: [Music Pitch]
 counterpoint = [
-                    g 4 hn,
-                    f 4 hn,
-                    g 4 hn,
-                    a 4 hn,
-                    b 4 hn,
-                    d 5 hn,
-                    c 5 hn,
-                    c 5 hn,
-                    d 5 hn,
-                    e 5 hn,
-                    d 5 hn,
-                    a 4 hn,
-                    c 5 hn,
-                    b 4 hn,
-                    c 5 hn
+                    g 4 qn,
+                    f 4 qn,
+                    g 4 qn,
+                    a 4 qn,
+                    b 4 qn,
+                    d 5 qn,
+                    c 5 qn,
+                    c 5 qn,
+                    d 5 qn,
+                    e 5 qn,
+                    d 5 qn,
+                    a 4 qn,
+                    c 5 qn,
+                    b 4 qn,
+                    c 5 qn
                ]
 
 
 -- by Fancois-Josepf Fetis (1784-1871)
 cantusFirmus :: [Music Pitch]
 cantusFirmus = [
-                    c 4 hn,
-                    d 4 hn,
-                    e 4 hn,
-                    c 4 hn,
-                    g 4 hn,
-                    f 4 hn,
-                    e 4 hn,
-                    a 4 hn,
-                    g 4 hn,
-                    c 4 hn,
-                    d 4 hn,
-                    f 4 hn,
-                    e 4 hn,
-                    d 4 hn,
-                    c 4 hn
+                    c 4 qn,
+                    d 4 qn,
+                    e 4 qn,
+                    c 4 qn,
+                    g 4 qn,
+                    f 4 qn,
+                    e 4 qn,
+                    a 4 qn,
+                    g 4 qn,
+                    c 4 qn,
+                    d 4 qn,
+                    f 4 qn,
+                    e 4 qn,
+                    d 4 qn,
+                    c 4 qn
                ]
 
 
