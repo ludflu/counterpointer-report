@@ -28,14 +28,14 @@ data ScaleDegree = Tonic | Supertonic | Mediant | Subdominant | Dominant | Subme
 data Degree = I | II | III | IV | V | VI | VII
    deriving (Eq, Ord, Enum, Show)
 
-newtype ScaleFamily = ScaleFamily [TwelveTone]
+newtype ScaleFamily = ScaleFamily [Interval]
 newtype Progression = Progression [(Degree,Mood)]
 
-type TwelveTone = ℤ / 12
+type Interval = ℤ / 12
 
-whole :: TwelveTone
+whole :: Interval
 whole = 2
-half :: TwelveTone
+half :: Interval
 half = 1
 
 major= ScaleFamily [whole, whole, half, whole, whole, whole, half, whole]
@@ -60,57 +60,65 @@ mixolydianPentatonic= ScaleFamily [whole, whole, minorThird, minorThird, whole]
 phrygianPentatonic= ScaleFamily [half, whole, minorThird, half, minorThird]
 diminishedPentatonic= ScaleFamily [whole, half, minorThird, half, minorThird]
 
-unison :: TwelveTone
+unison :: Interval
 unison = 0
 
-minorSecond :: TwelveTone
+minorSecond :: Interval
 minorSecond = 1
 
-majorSecond :: TwelveTone
+majorSecond :: Interval
 majorSecond = 2
 
-minorThird :: TwelveTone
+minorThird :: Interval
 minorThird = 3
 
-majorThird :: TwelveTone
+majorThird :: Interval
 majorThird = 4
 
-perfectFourth :: TwelveTone
+perfectFourth :: Interval
 perfectFourth = 5
 
-tritone :: TwelveTone  
-augmentedFourth = 6
-diminishedFifth = 6
+tritone :: Interval  
 tritone = 6
 
-perfectFifth :: TwelveTone
+augmentedFourth :: Interval
+augmentedFourth = 6
+
+diminishedFifth :: Interval
+diminishedFifth = 6
+
+perfectFifth :: Interval
 perfectFifth = 7
 
-minorSixth :: TwelveTone
+minorSixth :: Interval
 minorSixth = 8
 
-majorSixth :: TwelveTone
+majorSixth :: Interval
 majorSixth = 9
 
-minorSeventh :: TwelveTone
+minorSeventh :: Interval
 minorSeventh = 10
 
-majorSeventh :: TwelveTone
+majorSeventh :: Interval
 majorSeventh = 11
 
-octave :: TwelveTone
+octave :: Interval
 octave  = 12
 
 --leaving out the perfectFourth from the list of perfect and consonant Intervals
+perfection :: Set.Set Interval
 perfection = Set.fromList [unison, octave, perfectFifth]
 dissonantIntervals = Set.fromList [minorSecond, majorSecond, tritone, minorSeventh, majorSeventh]
 consonantIntervals = Set.fromList [ unison, minorThird, majorThird, perfectFourth, perfectFifth, minorSixth, majorSixth, octave]
 
-patternToSemitones :: [TwelveTone] -> [TwelveTone]
+patternToSemitones :: [Interval] -> [Interval]
 patternToSemitones pat = init $ scanl1 (+) (0:pat)
 
-modToInt :: TwelveTone -> Int
+modToInt :: Interval -> Int
 modToInt = fromIntegral . unMod 
+
+intToMod :: Int -> Interval
+intToMod i = toMod $ fromIntegral i
 
 -- given a scale pattern, a root note, and a duration, return the scale of notes
 makeScale :: ScaleFamily -> Pitch -> Rational -> [Music Pitch]
@@ -162,12 +170,15 @@ getIndexes = map (`mod` 7)
 getOctaveShift :: [Int] -> [Int]
 getOctaveShift = map ((* 12) . (`div` 7)) 
 
-calculateInterval :: Pitch -> Pitch -> TwelveTone
-calculateInterval p1  p2 = let i  = abs (absPitch p1 - absPitch p2)
+calculateInterval' :: Pitch -> Pitch -> Interval
+calculateInterval' p1  p2 = let i  = abs (absPitch p1 - absPitch p2)
                             in toMod $ fromIntegral i
 
+calculateInterval :: [Pitch] -> [Pitch] -> [Interval]
+calculateInterval p1 p2 = zipWith calculateInterval' p1 p2
+
 isConsonant :: Pitch -> Pitch -> Bool
-isConsonant p1 p2 = Set.member (calculateInterval p1 p2) consonantIntervals
+isConsonant p1 p2 = Set.member (calculateInterval' p1 p2) consonantIntervals
 
 calcConsanance' :: Music Pitch -> Music Pitch -> Bool
 calcConsanance' m1 m2 = let p1 = getPitch m1

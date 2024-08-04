@@ -63,7 +63,7 @@ p1  = (C,4)
 p2 :: Pitch
 p2 = (D,4)
 
-i = calculateInterval p1 p2
+-- i = calculateInterval p1 p2
 
 
 main :: IO ()
