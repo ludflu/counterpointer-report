@@ -3,6 +3,9 @@
 This library reports on a 1st species counterpoint and tells you which rules are violated.
 Its based on a [1:1 Counterpoint lecture by Jacob Gran](https://www.youtube.com/watch?v=b5PoTBOj7Xc&list=PL6Towqbh0pdpxUL5NlGTOW2hwVVo1IhdQ)
 
+![counterpoint](https://github.com/user-attachments/assets/f7c75a2f-8785-42af-b30d-67cc2765a883)
+
+
 CounterpointReport {
 isValidFirstSpeciesR = False,
 noDissonantIntervalsR = True,
