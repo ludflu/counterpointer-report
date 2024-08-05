@@ -11,11 +11,6 @@ import Data.Modular (toMod)
 data MusicMotion = Contrary | Parallel  | Oblique | Similar
     deriving (Show, Eq)
 
-type Note = Int
-
-data Direction = Ascending | Descending | Stationary
-    deriving (Show, Eq)
-
 isConsonantInterval :: Interval -> Bool
 isConsonantInterval i = Set.member i consonantIntervals
 
@@ -37,9 +32,6 @@ tuple2 ns = (head ns, (head . tail) ns)
 
 diff :: (Int,Int) -> Int
 diff (a,b) = b-a
-
-intToDirection :: Int -> Direction
-intToDirection i = if i > 0 then Ascending else Descending
 
 -- takes a series of notes, specificed in number of half steps (semitones)
 -- returns a series of intervals, also in semitones. negative if pitch drops, positive if it rises
