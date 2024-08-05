@@ -28,3 +28,12 @@ CounterpointReport {
 ```
 
 This library uses Euterpea to render the MIDI output, and modular-arithmetic to calculate the intervals.
+
+### Building
+
+If you're trying to get this to build locally, you'll probably want to use my patched versions of Euterpea and PortMIDI-Haskell
+
+https://github.com/ludflu/PortMidi-haskell
+https://github.com/ludflu/Euterpea2
+
+Hopefully we can get those fixed up.
