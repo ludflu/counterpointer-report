@@ -21,7 +21,7 @@ isConsonantInterval i = Set.member i consonantIntervals
 
 --The counterpoint must begin and end on a perfect consonance.
 beginAndEndPerfectly :: [Pitch] -> [Pitch] -> Bool
-beginAndEndPerfectly a b = let intervals = zipWith (calculateInterval') a b
+beginAndEndPerfectly a b = let intervals = zipWith calculateInterval' a b
                                absIs = map abs intervals
                                begin =  head absIs --TODO this is partial
                                end =  last absIs --TODO this is partial
@@ -41,7 +41,7 @@ diff (a,b) = b-a
 intToDirection :: Int -> Direction
 intToDirection i = if i > 0 then Ascending else Descending
 
---takes a series of notes, specificed in number of half steps (semitones)
+-- takes a series of notes, specificed in number of half steps (semitones)
 -- returns a series of intervals, also in semitones. negative if pitch drops, positive if it rises
 direction :: [Pitch] -> [Int]
 direction ns = let absNotes = map absPitch ns
@@ -49,7 +49,7 @@ direction ns = let absNotes = map absPitch ns
                    noEmptyPrs = filter (\x -> length x == 2) prs
                    directions = map (diff . tuple2) noEmptyPrs
                 in directions
-               
+
 mostlySteps :: [Pitch] -> Bool
 mostlySteps ns = let is = direction ns
                      absInts = map abs is
@@ -70,7 +70,7 @@ motions :: [Pitch] -> [Pitch] -> [(Int, Int)]
 motions a b = let adir = direction a
                   bdir = direction b
                in zip adir bdir
- 
+
 --takes two series of notes, specificed in semitones
 --returns the motion type of each note movement with respect to each other
 motionTypes :: [Pitch] -> [Pitch] -> [MusicMotion]
@@ -83,15 +83,6 @@ mostlyContrary a b = let ms = motionTypes a b
                          contrary = filter (== Contrary) ms
                          notContrary = filter (/= Contrary) ms
                       in length contrary > length notContrary
-
-
--- relativeIntervals :: [Pitch] -> [Pitch] -> [Int]
--- relativeIntervals = zipWith (-)
-
--- absIntervals :: [Pitch] -> [Pitch] -> [Int]
--- absIntervals a b = let interval = relativeIntervals a b
---                        absInt = map abs interval
---                     in absInt
 
 
 --Perfect consonances must be approached by oblique or contrary motion.
@@ -126,11 +117,10 @@ isParallelFifthOrOctave (x,y) = x == octave || abs x == perfectFifth && x==y
 
 isParallelFifthOrOctave' :: (Int, Int) -> Bool
 isParallelFifthOrOctave' (x',y') = let x = intToMod x'
-                                       y = intToMod y'  
+                                       y = intToMod y'
                                        in isParallelFifthOrOctave (x,y)
-   
 
---TODO this doesn't seem quite right. Violated by example
+
 --Avoid parallel fifths or octaves between any two parts;
 avoidParallelFifthsOrOctaves :: [Pitch] -> [Pitch] -> Bool
 avoidParallelFifthsOrOctaves a b = let ms = motions a b
@@ -138,6 +128,7 @@ avoidParallelFifthsOrOctaves a b = let ms = motions a b
                                        pfo = filter isParallelFifthOrOctave' ms
                                     in null pfo
 
+--TODO
 --and avoid "hidden" parallel fifths or octaves: that is, movement by similar motion to a perfect fifth or octave, unless one part (sometimes restricted to the higher of the parts) moves by step.
 
 
@@ -172,7 +163,6 @@ noLeapsInSameDirection a b = let ms = motions a b
                               in null sls
 
 --Avoid dissonant intervals between any two parts: major or minor second, major or minor seventh, any augmented or diminished interval, and perfect fourth (in many contexts).
-
 noDissonantIntervals :: [Pitch] -> [Pitch] -> Bool
 noDissonantIntervals a b = let intervals = Set.fromList $ calculateInterval a b
                                inter = Set.intersection intervals dissonantIntervals
@@ -185,6 +175,7 @@ leapOnlyByConsonantInterval ns = let ms = direction ns
                                      cleaps = filter isConsonantInterval absLeaps
                                   in length cleaps == length absLeaps
 
+--TODO
 climaxIsConsonantWithScaleOne :: [Int] -> Bool
 climaxIsConsonantWithScaleOne ns = undefined
 
