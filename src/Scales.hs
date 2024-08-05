@@ -75,7 +75,7 @@ majorThird = 4
 perfectFourth :: Interval
 perfectFourth = 5
 
-tritone :: Interval  
+tritone :: Interval
 tritone = 6
 
 augmentedFourth :: Interval
@@ -103,6 +103,7 @@ octave :: Interval
 octave  = 12
 
 --leaving out the perfectFourth from the list of perfect and consonant Intervals
+-- is that the right thing to do?
 perfection :: Set.Set Interval
 perfection = Set.fromList [unison, octave, perfectFifth]
 dissonantIntervals = Set.fromList [minorSecond, majorSecond, tritone, minorSeventh, majorSeventh]
@@ -112,7 +113,7 @@ patternToSemitones :: [Interval] -> [Interval]
 patternToSemitones pat = init $ scanl1 (+) (0:pat)
 
 modToInt :: Interval -> Int
-modToInt = fromIntegral . unMod 
+modToInt = fromIntegral . unMod
 
 intToMod :: Int -> Interval
 intToMod i = toMod $ fromIntegral i
@@ -165,21 +166,21 @@ getIndexes = map (`mod` 7)
 
 --how many semitones to raise
 getOctaveShift :: [Int] -> [Int]
-getOctaveShift = map ((* 12) . (`div` 7)) 
+getOctaveShift = map ((* 12) . (`div` 7))
 
 calculateInterval' :: Pitch -> Pitch -> Interval
 calculateInterval' p1  p2 = let i  = abs (absPitch p1 - absPitch p2)
                             in toMod $ fromIntegral i
 
 calculateInterval :: [Pitch] -> [Pitch] -> [Interval]
-calculateInterval p1 p2 = zipWith calculateInterval' p1 p2
+calculateInterval = zipWith calculateInterval'
 
 
 calculateAbsInterval' :: Pitch -> Pitch -> Int
 calculateAbsInterval' p1  p2 = abs (absPitch p1 - absPitch p2)
-                            
+
 calculateAbsInterval :: [Pitch] -> [Pitch] -> [Int]
-calculateAbsInterval p1 p2 = zipWith calculateAbsInterval' p1 p2
+calculateAbsInterval = zipWith calculateAbsInterval'
 
 
 isConsonant :: Pitch -> Pitch -> Bool
@@ -191,7 +192,7 @@ calcConsanance' m1 m2 = let p1 = getPitch m1
                         in isConsonant p1 p2
 
 calcConsanance :: [Music Pitch] -> [Music Pitch] -> [Bool]
-calcConsanance m1 m2 =  zipWith calcConsanance' m1 m2
+calcConsanance = zipWith calcConsanance'
 
 
 getNotes :: Pitch -> Mood -> Rational -> [Int] -> [Music Pitch]
@@ -213,17 +214,17 @@ makeMajorChord :: Music Pitch -> Music Pitch
 makeMajorChord p = chord [p, shiftPitches (modToInt (whole+whole)) p, shiftPitches (modToInt (whole+whole+half+whole)) p]
 
 makeMinorChord :: Music Pitch -> Music Pitch
-makeMinorChord p = chord [p, shiftPitches (modToInt(whole+half)) p, shiftPitches (modToInt(whole+half+whole+whole)) p]
+makeMinorChord p = chord [p, shiftPitches (modToInt (whole+half)) p, shiftPitches (modToInt (whole+half+whole+whole)) p]
 
 makeChord :: Mood -> Music Pitch -> Music Pitch
 makeChord Major = makeMajorChord
 makeChord Minor = makeMinorChord
 
 fromDegree :: Degree -> Int
-fromDegree = fromEnum 
+fromDegree = fromEnum
 
 makeChordProgression :: [(Degree,Mood)] -> Pitch -> ScaleFamily -> [Music Pitch]
-makeChordProgression progression key scaleFamily = let scale = makeScale scaleFamily key wn 
+makeChordProgression progression key scaleFamily = let scale = makeScale scaleFamily key wn
                                                        degrees = map fst progression
                                                        moods = map snd progression
                                                        notes = map (\degree -> scale !! fromDegree degree) degrees
