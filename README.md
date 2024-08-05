@@ -5,20 +5,21 @@ Its based on a [1:1 Counterpoint lecture by Jacob Gran](https://www.youtube.com/
 
 ![counterpoint](https://github.com/user-attachments/assets/f7c75a2f-8785-42af-b30d-67cc2765a883)
 
-
+```
 CounterpointReport {
-isValidFirstSpeciesR = False,
-noDissonantIntervalsR = True,
-noLeapsInSameDirectionR = True,
-avoidParallelFourthsR = True,
-avoidParallelFifthsOrOctavesR = False,
-unisonOnlyBeginOrEndR = True,
-approachPerfectionR = True,
-beginAndEndPerfectlyR = True,
-mostlyContraryR = True,
-limitIntervalR = True,
-lessThan3RepeatedIntervalsR = True,
-mostlyStepsCantusFirmusR = True,
-mostlyStepsCounterpointR = True,
-onlyConsonantLeapsR = True
+  isValidFirstSpeciesR = False,
+  noDissonantIntervalsR = True,
+  noLeapsInSameDirectionR = True,
+  avoidParallelFourthsR = True,
+  avoidParallelFifthsOrOctavesR = False,
+  unisonOnlyBeginOrEndR = True,
+  approachPerfectionR = True,
+  beginAndEndPerfectlyR = True,
+  mostlyContraryR = True,
+  limitIntervalR = True,
+  lessThan3RepeatedIntervalsR = True,
+  mostlyStepsCantusFirmusR = True,
+  mostlyStepsCounterpointR = True,
+  onlyConsonantLeapsR = True
 }
+```
