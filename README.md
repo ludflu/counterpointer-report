@@ -31,9 +31,7 @@ This library uses Euterpea to render the MIDI output, and modular-arithmetic to 
 
 ### Building
 
-If you're trying to get this to build locally, you'll probably want to use my patched versions of Euterpea and PortMIDI-Haskell
-
-https://github.com/ludflu/PortMidi-haskell
-https://github.com/ludflu/Euterpea2
+If you're trying to get this to build locally, you'll probably want to use my patched versions of [Euterpea](https://github.com/ludflu/Euterpea2
+) and [PortMIDI-Haskell](https://github.com/ludflu/PortMidi-haskell)
 
 Hopefully we can get those fixed up.
