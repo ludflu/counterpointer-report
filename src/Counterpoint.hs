@@ -62,7 +62,7 @@ motionType a b
  | a == b       = Parallel   --same direction and interval
  | a>0 && b<0   = Contrary   --different direction
  | a<0 && b>0   = Contrary   --different direction
- | a==0 || b==0 = Oblique    --one note repeats
+ | a==0 || b==0 = Oblique    --one note repeats, the other moves up or down
  | otherwise    = Similar    --same direction, different interval
 
 
